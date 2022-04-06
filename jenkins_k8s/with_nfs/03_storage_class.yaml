@@ -1,0 +1,10 @@
+
+kind: StorageClass
+apiVersion: storage.k8s.io/v1
+metadata:
+  name: oci-fss
+  namespace: pipeline-namespace
+provisioner: oracle.com/oci-fss
+parameters:
+   #Replace This with OCID of Mount Point
+   mntTargetId: ocid1.mounttarget.oc1.sa_santiago_1.aaaaaa4np2ssov5jonrwyllqojxwiottmewxgylooruwcz3pfuys2ylefuyqaaaa
