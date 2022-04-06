@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+ name: jenkins-oke-fsspv-claim
+ namespace: pipeline-namespace
+ labels:
+   app: jenkins-server-deployment
+spec:
+ storageClassName: oci-bv
+ accessModes:
+ - ReadWriteOnce
+ resources:
+  requests: 
+    storage: 50Gi
+ 

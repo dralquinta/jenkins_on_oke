@@ -1,0 +1,20 @@
+
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+ name: jenkins-oke-fsspv
+ namespace: pipeline-namespace
+spec:
+ storageClassName: oci-fss
+ capacity:
+  storage: 100Gi
+ accessModes:
+  - ReadWriteOnce
+ mountOptions:
+  - nosuid
+ nfs:
+# Replace this with the IP of your FSS file system in OCI
+  server: 10.0.3.249
+# Replace this with the Path of your FSS file system in OCI
+  path: "/jenkins-oke-file-system"
+  readOnly: false

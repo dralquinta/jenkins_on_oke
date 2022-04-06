@@ -1,0 +1,74 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jenkins
+  namespace: pipeline-namespace
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jenkins-server-deployment
+  template:
+    metadata:
+      labels:
+        app: jenkins-server-deployment
+    spec:
+      securityContext:
+            fsGroup: 1000 
+            runAsUser: 0
+      serviceAccountName: jenkins-admin
+      containers:
+        - name: jenkins
+          image: jenkins/jenkins:lts
+          resources:
+            limits:
+              memory: "2Gi"
+              cpu: "1000m"
+            requests:
+              memory: "500Mi"
+              cpu: "500m"
+          ports:
+            - name: httpport
+              containerPort: 8080
+            - name: jnlpport
+              containerPort: 50000
+          livenessProbe:
+            httpGet:
+              path: "/login"
+              port: 8080
+            initialDelaySeconds: 90
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 5
+          readinessProbe:
+            httpGet:
+              path: "/login"
+              port: 8080
+            initialDelaySeconds: 60
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          volumeMounts:
+            - name: jenkins-persistent-storage
+              mountPath: /var/jenkins_home         
+      volumes:
+        - name: jenkins-persistent-storage
+          persistentVolumeClaim:
+              claimName: jenkins-oke-fsspv-claim
+
+--- 
+apiVersion: v1
+kind: Service
+metadata:
+  name: jenkins-service
+  namespace: pipeline-namespace
+  labels:
+    app: wordpress
+spec:
+  ports:
+    - port: 8080
+      targetPort: 8080
+  selector:
+    app: jenkins-server-deployment
+    tier: frontend
+  type: ClusterIP
