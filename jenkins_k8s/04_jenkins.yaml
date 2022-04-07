@@ -63,7 +63,7 @@ metadata:
   name: jenkins-service
   namespace: pipeline-namespace
   labels:
-    app: wordpress
+    app: jenkins-server-deployment
 spec:
   ports:
     - port: 8080
